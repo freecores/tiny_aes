@@ -28,7 +28,7 @@ module aes_128(clk, state, key, out);
         k0 <= key;
       end
     assign out = s10;
-    one_round
+    one_round_128
         r1 (clk, s0, k0, s1, k1, 8'h1),
         r2 (clk, s1, k1, s2, k2, 8'h2),
         r3 (clk, s2, k2, s3, k3, 8'h4),
@@ -38,11 +38,11 @@ module aes_128(clk, state, key, out);
         r7 (clk, s6, k6, s7, k7, 8'h40),
         r8 (clk, s7, k7, s8, k8, 8'h80),
         r9 (clk, s8, k8, s9, k9, 8'h1b);
-    final_round
+    final_round_128
         rf (clk, s9, k9, s10, 8'h36);
 endmodule
 
-module one_round(clk, state_in, key_in, state_out, key_out, rcon);
+module one_round_128(clk, state_in, key_in, state_out, key_out, rcon);
     input              clk;
     input      [127:0] state_in,  key_in;
     input      [7:0]   rcon;
@@ -88,7 +88,7 @@ module one_round(clk, state_in, key_in, state_out, key_out, rcon);
         state_out <= {z0, z1, z2, z3};
 endmodule
 
-module final_round(clk, state_in, key_in, state_out, rcon);
+module final_round_128(clk, state_in, key_in, state_out, rcon);
     input              clk;
     input      [127:0] state_in,  key_in;
     input      [7:0]   rcon;

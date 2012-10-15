@@ -16,7 +16,7 @@
 
 `timescale 1ns / 1ps
 
-module test_final_round;
+module test_final_round_128;
 
 	// Inputs
 	reg clk;
@@ -29,7 +29,7 @@ module test_final_round;
     wire [31:0] s0, s1, s2, s3;
 
 	// Instantiate the Unit Under Test (UUT)
-	final_round uut (
+	final_round_128 uut (
 		.clk(clk), 
 		.state_in(state_in), 
 		.key_in(key_in), 

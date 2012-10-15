@@ -30,7 +30,7 @@ module test_one_round;
     wire [31:0] k0, k1, k2, k3, s0, s1, s2, s3;
 
 	// Instantiate the Unit Under Test (UUT)
-	one_round uut (
+	one_round_128 uut (
 		.clk(clk), 
 		.state_in(state_in), 
 		.key_in(key_in), 
