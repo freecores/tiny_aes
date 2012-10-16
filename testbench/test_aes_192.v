@@ -16,55 +16,49 @@
 
 `timescale 1ns / 1ps
 
-module test_final_round_128;
+module test_aes_192;
 
 	// Inputs
 	reg clk;
-	reg [127:0] state_in;
-	reg [127:0] key_in;
-	reg [7:0] rcon;
+	reg [127:0] state;
+	reg [191:0] key;
 
 	// Outputs
-	wire [127:0] state_out;
-    wire [31:0] s0, s1, s2, s3;
+	wire [127:0] out;
 
 	// Instantiate the Unit Under Test (UUT)
-	final_round_128 uut (
+	aes_192 uut (
 		.clk(clk), 
-		.state_in(state_in), 
-		.key_in(key_in), 
-		.state_out(state_out), 
-		.rcon(rcon)
+		.state(state), 
+		.key(key), 
+		.out(out)
 	);
-
-    assign {s0, s1, s2, s3} = state_out;
 
 	initial begin
 		clk = 0;
-		state_in = 0;
-        key_in = 0;
-        rcon = 0;
+		state = 0;
+		key = 0;
 
 		#100;
         @ (negedge clk);
-        state_in = {32'heb_40_f2_1e, 32'h59_2e_38_84, 32'h8b_a1_13_e7, 32'h1b_c3_42_d2};
-		key_in = {32'hac_77_66_f3, 32'h19_fa_dc_21, 32'h28_d1_29_41, 32'h57_5c_00_6e};
-		rcon = 8'h36;
+        state = 128'h3243f6a8885a308d313198a2e0370734;
+        key   = 192'h2b7e151628aed2a6abf7158809cf4f3c762e7160f38b4da5;
         #10;
-		state_in = 0;
-        key_in = 0;
-        rcon = 0;        
+        state = 128'h00112233445566778899aabbccddeeff;
+        key   = 192'h000102030405060708090a0b0c0d0e0f1011121314151617;
         #10;
-
-        if(s0 != 32'h39_25_84_1d) begin $display("E"); $finish; end
-        if(s1 != 32'h02_dc_09_fb) begin $display("E"); $finish; end
-        if(s2 != 32'hdc_11_85_97) begin $display("E"); $finish; end
-        if(s3 != 32'h19_6a_0b_32) begin $display("E"); $finish; end
-        
+        state = 128'h0;
+        key   = 192'h0;
+        #230;
+        if (out !== 128'hf9fb29aefc384a250340d833b87ebc00)
+          begin $display("E"); $finish; end
+        #10;
+        if (out !== 128'hdda97ca4864cdfe06eaf70a0ec0d7191)
+          begin $display("E"); $finish; end
         $display("Good.");
         $finish;
 	end
-    
+      
     always #5 clk = ~clk;
 endmodule
 

@@ -38,21 +38,6 @@ module aes_256 (clk, state, key, out);
 
     assign k0b = k0a[127:0];
 
-    one_round_256
-         r1 (clk, s0, k0b, s1),
-         r2 (clk, s1, k1b, s2),
-         r3 (clk, s2, k2b, s3),
-         r4 (clk, s3, k3b, s4),
-         r5 (clk, s4, k4b, s5),
-         r6 (clk, s5, k5b, s6),
-         r7 (clk, s6, k6b, s7),
-         r8 (clk, s7, k7b, s8),
-         r9 (clk, s8, k8b, s9),
-        r10 (clk, s9, k9b, s10),
-        r11 (clk, s10, k10b, s11),
-        r12 (clk, s11, k11b, s12),
-        r13 (clk, s12, k12b, s13);
-
     expand_key_type_A_256
         a1 (clk, k1, 8'h1, k2, k1b),
         a3 (clk, k3, 8'h2, k4, k3b),
@@ -70,72 +55,23 @@ module aes_256 (clk, state, key, out);
         a10 (clk, k10, k11, k10b),
         a12 (clk, k12, k13, k12b);
     
-    final_round_256
+    one_round
+         r1 (clk, s0, k0b, s1),
+         r2 (clk, s1, k1b, s2),
+         r3 (clk, s2, k2b, s3),
+         r4 (clk, s3, k3b, s4),
+         r5 (clk, s4, k4b, s5),
+         r6 (clk, s5, k5b, s6),
+         r7 (clk, s6, k6b, s7),
+         r8 (clk, s7, k7b, s8),
+         r9 (clk, s8, k8b, s9),
+        r10 (clk, s9, k9b, s10),
+        r11 (clk, s10, k10b, s11),
+        r12 (clk, s11, k11b, s12),
+        r13 (clk, s12, k12b, s13);
+
+    final_round
         rf (clk, s13, k13b, out);
-endmodule
-
-/* one AES round for every two clock cycles */
-module one_round_256 (clk, state_in, key, state_out);
-    input              clk;
-    input      [127:0] state_in, key;
-    output reg [127:0] state_out;
-    wire       [31:0]  s0,  s1,  s2,  s3,
-                       z0,  z1,  z2,  z3,
-                       p00, p01, p02, p03,
-                       p10, p11, p12, p13,
-                       p20, p21, p22, p23,
-                       p30, p31, p32, p33,
-                       k0,  k1,  k2,  k3;
-
-    assign {k0, k1, k2, k3} = key;
-
-    assign {s0, s1, s2, s3} = state_in;
-
-    table_lookup
-        t0 (clk, s0, p00, p01, p02, p03),
-        t1 (clk, s1, p10, p11, p12, p13),
-        t2 (clk, s2, p20, p21, p22, p23),
-        t3 (clk, s3, p30, p31, p32, p33);
-
-    assign z0 = p00 ^ p11 ^ p22 ^ p33 ^ k0;
-    assign z1 = p03 ^ p10 ^ p21 ^ p32 ^ k1;
-    assign z2 = p02 ^ p13 ^ p20 ^ p31 ^ k2;
-    assign z3 = p01 ^ p12 ^ p23 ^ p30 ^ k3;
-
-    always @ (posedge clk)
-        state_out <= {z0, z1, z2, z3};
-endmodule
-
-module final_round_256 (clk, state_in, key_in, state_out);
-    input              clk;
-    input      [127:0] state_in;
-    input      [127:0] key_in;
-    output reg [127:0] state_out;
-    wire [31:0] s0,  s1,  s2,  s3,
-                z0,  z1,  z2,  z3,
-                k0,  k1,  k2,  k3;
-    wire [7:0]  p00, p01, p02, p03,
-                p10, p11, p12, p13,
-                p20, p21, p22, p23,
-                p30, p31, p32, p33;
-    
-    assign {k0, k1, k2, k3} = key_in;
-    
-    assign {s0, s1, s2, s3} = state_in;
-
-    S4
-        S4_1 (clk, s0, {p00, p01, p02, p03}),
-        S4_2 (clk, s1, {p10, p11, p12, p13}),
-        S4_3 (clk, s2, {p20, p21, p22, p23}),
-        S4_4 (clk, s3, {p30, p31, p32, p33});
-
-    assign z0 = {p00, p11, p22, p33} ^ k0;
-    assign z1 = {p10, p21, p32, p03} ^ k1;
-    assign z2 = {p20, p31, p02, p13} ^ k2;
-    assign z3 = {p30, p01, p12, p23} ^ k3;
-
-    always @ (posedge clk)
-        state_out <= {z0, z1, z2, z3};
 endmodule
 
 /* expand k0,k1,k2,k3 for every two clock cycles */
