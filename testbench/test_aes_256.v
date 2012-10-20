@@ -40,7 +40,13 @@ module test_aes_256;
 		key = 0;
 
 		#100;
+        /*
+         * TIMEGRP "key" OFFSET = IN 6.4 ns VALID 6 ns AFTER "clk" HIGH;
+         * TIMEGRP "state" OFFSET = IN 6.4 ns VALID 6 ns AFTER "clk" HIGH;
+         * TIMEGRP "out" OFFSET = OUT 2.2 ns BEFORE "clk" HIGH;
+         */
         @ (negedge clk);
+        #2;
         state = 128'h3243f6a8885a308d313198a2e0370734;
         key   = 256'h2b7e151628aed2a6abf7158809cf4f3c_762e7160f38b4da56a784d9045190cfe;
         #10;
