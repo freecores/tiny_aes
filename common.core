@@ -1,0 +1,14 @@
+CAPI=2:
+
+name : :tiny_aes:common:0
+
+filesets:
+  rtl:
+    files:
+      - rtl/table.v
+      - rtl/round.v
+    file_type : verilogSource
+
+targets:
+  default:
+    filesets : [rtl]

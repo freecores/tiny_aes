@@ -1,0 +1,20 @@
+CAPI=2:
+
+name : :tiny_aes:aes128:0
+
+filesets:
+  rtl:
+    files: [rtl/aes_128.v : {file_type : verilogSource}]
+    depend : [":tiny_aes:common"]
+
+  openlane:
+    files: [data/openlane_aes128.tcl : {file_type : tclSource}]
+
+targets:
+  default:
+    filesets : [rtl]
+
+  sky130:
+    default_tool : openlane
+    filesets : [rtl, openlane]
+    toplevel : aes_128
